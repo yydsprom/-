@@ -35,24 +35,92 @@ void InThread(LPtree T)   //中序遍历一颗二叉树，一边遍历，一边�
     }
 }
 
+#include<stdio.h>
+#include<stdlib.h>
+struct Node * pre = NULL;
+typedef struct Node
+{
+    int ltag,rtag;
+    struct Node * lchild,* rchild;
+    char data;
+}*LPtree;
+
+void visit(LPtree root)
+{   
+    if(root->lchild==NULL)
+    {
+        root->lchild = pre;
+        root->ltag = 1;
+    }
+    if(pre->rchild==NULL&&pre!=NULL)
+    {
+        pre->rchild = root;
+        pre->rtag = 1;
+    }
+    pre = root;
+}
+
+void PreThread(LPtree root)
+{
+    if(root!=NULL)
+    {
+        visit(root);
+        if(root->ltag==0)
+            PreThread(root->lchild);
+        PreThread(root->rchild);
+    }
+}
 void CreateInThread(LPtree root)
 {
     if(root)
     {
-        InThread(root);
+        PreThread(root);
         if(pre->rchild==NULL)
-            pre->rtag = 1;
+            pre->rtag = 1;  //处理最后一个结点
     }
-
-
-
 }
 
-int main()
+
+#include<stdio.h>
+#include<stdlib.h>
+struct Node * pre = NULL;
+typedef struct Node
 {
-    
+    int ltag,rtag;
+    struct Node * lchild,* rchild;
+    char data;
+}*LPtree;
 
+void visit(LPtree root)
+{   
+    if(root->lchild==NULL)
+    {
+        root->lchild = pre;
+        root->ltag = 1;
+    }
+    if(pre->rchild==NULL&&pre!=NULL)
+    {
+        pre->rchild = root;
+        pre->rtag = 1;
+    }
+    pre = root;
+}
 
-
-
+void PostThread(LPtree root)
+{
+    if(root!=NULL)
+    {
+        PostThread(root->lchild);
+        PostThread(root->rchild);
+        visit(root);
+    }
+}
+void CreatePostThread(LPtree root)
+{
+    if(root)
+    {
+        PostThread(root);
+        if(pre->rchild==NULL)
+            pre->rtag = 1;  //处理最后一个结点
+    }
 }
